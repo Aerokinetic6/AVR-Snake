@@ -25,11 +25,14 @@ void y_inc();
 void y_dec();
 void next_pos(unsigned char k);
 unsigned char chck_hit();
+unsigned char chck_new();
+void place_rnd();
 
 
 unsigned char kp=0, cnt=0, t=0, ch=0x00, btn=0, ss[4], keyr=0, col=0, keyin=10, rlse_cntr=0, last_value=0;
 //kp: keypressed happened, kp tárolja mely bill lett leütve
 unsigned char y[64], x[64], l=14, last=0, nxt_y=0, nxt_x=0, c=0, h=0;
+unsigned char r=0, rnd_cnt=0, rnd_y=0, rnd_x=0, nw=0;
 
 
 int main()
@@ -76,9 +79,11 @@ while(1){
 
         matrix();
         
+        if ( kp>0 && r==0 ) {r=1; place_rnd(); }
+        
         if((t==1) && (kp==2 || kp==8 || kp==4 || kp==6)){
        
-        t=0; cnt=0;
+        t=0; cnt=0; 
        
         lcd_gotoyx(y[last],x[last]);
         lcd_data(0x01);
@@ -96,6 +101,9 @@ while(1){
              
         h=chck_hit();
         if (h==1) {lcd_clear(); lcd_gotoyx(1,4); lcd_string("Game Over!"); UartSendString("\n\rSnake is Dead."); while(1);}
+        
+        nw=chck_new();
+        if(nw==1) {place_rnd();}
         
         if(last<l-1) last++;
         else last=0;
@@ -332,6 +340,24 @@ unsigned char chck_hit()
 }
 
 
+unsigned char chck_new()
+{
+        unsigned char i=l;
+        
+          if ((nxt_y == rnd_y) && (nxt_x == rnd_x)) return 1;
+          else return 0;
+
+}
+
+
+
+void place_rnd() 
+{
+        rnd_x=rnd_cnt%16; rnd_y=rnd_cnt%4;
+        lcd_gotoyx(rnd_y, rnd_x);
+        lcd_data('X');
+}
+
 
 ISR(USART0_RX_vect)
 {
@@ -347,6 +373,7 @@ ISR(TIMER2_OVF_vect)
 {
 	TCNT2=0;
 	cnt++;	
+	rnd_cnt++;
 
         if (cnt==SPEED) {
         
