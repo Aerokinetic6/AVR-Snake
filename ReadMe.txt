@@ -1,9 +1,11 @@
-random poz generálás műxik -> place_rnd()
-rnd_cntr folyamatosan pörög annak %4 ill %16 maradéka lesz a rnd_xy koord.ja
-chch_new() ellenőrzi, h elérte e a nxt_yx a rnd_yx poz.ót,
-ha igen új rnd poz generálódik place_rnd();-vel
-aránylag véletlenszerűnek tűnik rnd_cnt értéke ezen események bekövetkeztekor
-holott cnt=100-nál lehet midnig csak place_rnd() esemény 
-(vszeg azért nem baj mert cnt csak 100ig pörög, míg rnd_cnt 255nél fordul át,
-íyg a kettő nincs szinkronban, bár magában hordozza a lehetőséget, h roudnrobin 
-szerű rnd szám generálást biztosít csak -> ki kéne számolni)
+randmo poz.kiderült, h csak 16 konrkté helyre tesz, és azok közt van 
+véletlenszerűség, ugyh azt javítani kell h 16*4 helyre is működjön.
+(kívéve persze a kígyó részeit)
+
+kígyó már tud növekedni, de bugos:
+kanyarnál nem nő egyből mert egyből 'X'-ra rajzolódik az új fej.
+
+ha nem rákanyarodással veszi fel akkor működik
+
+de egy fura féregjáratos efefkt időnként beüt, amit nem sikerült
+eddig kitalálnom mi okozza

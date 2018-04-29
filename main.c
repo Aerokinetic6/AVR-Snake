@@ -27,11 +27,12 @@ void next_pos(unsigned char k);
 unsigned char chck_hit();
 unsigned char chck_new();
 void place_rnd();
+void snake_add();
 
 
 unsigned char kp=0, cnt=0, t=0, ch=0x00, btn=0, ss[4], keyr=0, col=0, keyin=10, rlse_cntr=0, last_value=0;
 //kp: keypressed happened, kp tárolja mely bill lett leütve
-unsigned char y[64], x[64], l=14, last=0, nxt_y=0, nxt_x=0, c=0, h=0;
+unsigned char y[64], x[64], l=1, last=0, nxt_y=0, nxt_x=0, c=0, h=0;
 unsigned char r=0, rnd_cnt=0, rnd_y=0, rnd_x=0, nw=0;
 
 
@@ -102,13 +103,13 @@ while(1){
         h=chck_hit();
         if (h==1) {lcd_clear(); lcd_gotoyx(1,4); lcd_string("Game Over!"); UartSendString("\n\rSnake is Dead."); while(1);}
         
-        nw=chck_new();
-        if(nw==1) {place_rnd();}
-        
         if(last<l-1) last++;
         else last=0;
+                  
+        nw=chck_new();
+        if(nw==1) {nw=0; nxt_y = rnd_y; nxt_x = rnd_x; snake_add(); place_rnd();}
         
-       
+        
           
         
                  
@@ -271,7 +272,7 @@ void matrix ()
 		if ((keyin!=10 && keyin==last_value && rlse_cntr>=5) || (keyin!=10 && keyin!=last_value)) {
 			 rlse_cntr=0; 
 			 last_value=keyin;
-			 UartSendByte(keyin+48);
+			 //UartSendByte(keyin+48);
 			 kp=keyin;
 			 continue;
 			}
@@ -342,11 +343,35 @@ unsigned char chck_hit()
 
 unsigned char chck_new()
 {
-        unsigned char i=l;
+        unsigned char rn;
         
-          if ((nxt_y == rnd_y) && (nxt_x == rnd_x)) return 1;
-          else return 0;
-
+        
+        
+        switch (kp) {
+                case 2: { if(rnd_y == 3){ rn=0; }
+                          else rn = rnd_y+1;
+                          if ((nxt_x == rnd_x) && (nxt_y <= rn)) { return 1;}
+                          break;}
+                
+                case 6: { if(rnd_x == 0){ rn=15; }
+                          else rn = rnd_x-1;
+                          if ((nxt_y == rnd_y) && (nxt_x >= rn)) { return 1;}
+                          break;}
+                          
+                case 4: { if(rnd_x == 15){ rn=0; }
+                          else rn = rnd_x+1;
+                          if ((nxt_y == rnd_y) && (nxt_x <= rn)) { return 1;}
+                          break;}
+                
+                case 8: { if(rnd_y == 0){ rn=3; }
+                          else rn = rnd_y-1;
+                          if ((nxt_x == rnd_x) && (nxt_y >= rn)) { return 1;}
+                          break;}
+        
+        }//sw   
+        
+        return 0;     
+          
 }
 
 
@@ -358,6 +383,34 @@ void place_rnd()
         lcd_data('X');
 }
 
+
+
+
+void snake_add()
+{
+        unsigned char i=l;
+        
+        l++;
+               
+        while(i>last) {
+          x[i] = x[i-1];
+          y[i] = y[i-1];
+          i--;
+        
+        
+        }
+        
+        x[last] = nxt_x;
+        y[last] = nxt_y;
+        
+        if(last<l-1) last++;
+        else last=0;
+
+
+}
+
+
+//////////////
 
 ISR(USART0_RX_vect)
 {
