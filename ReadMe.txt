@@ -1,25 +1,14 @@
-Updatelve lett a chck_new()
+Alapfunkciók jól műxenek.
+Megmaradt hiányosságok:
+- Rnd koord generálás félkész
+- kígyótestbe is kerül
+- "hátraarc kivégzés"
 
-letisztultabb módszerrel, csak azt vizsgáljuk, h a kövi poz rnd_xy-nal egyezik-e
-ha igen akkor még az új fej kirajzolása előtt számítunk egy újabb nxt_pos()-t mintha 
-"tolná" maga előtt a megadott irányba a kígyó az új elemet.
-
-Ezzel most rákanyarodáskor is működik a snake_add()
-
-- fő gond, h felvételkor nincs lehetőség spontán irányváltásra, hanem, mindenképp
-  a már megkezdett irányba történik a lépés onnan ahol rnd_xy le van helyezve
-  (nxt_xy oda generálódik) és csak ezután lehet másmerre kanyarodni, ha akarunk
-
-- a féregjárat effekt több kipróbálás után sem jelentkezett eddig, vszeg megszűnt,
-  de továbbra is rejtélyes pontosan mi okozta, ezexerint annyi elmondható, h a 
-  régi kissé kaotikus chck_new() eljárással vt összefüggésben a bug
-
-- ha a farok mellett van közvetlen, ill. ha a farok úgymond átmegy 'X'-en
-  lépéskor láthatalanná válhat az új szelvény
-  ez elvileg megszűnne, ha a kígyótestbe nem generálódhatna rndom pos-ós 'X'
-  bár ebbe nem vok biztos -> végig kell gondolni az eseteket
-  
-- rndm szám generálás továbbra is elégtelen (csak 16 poz váltakozik véletlenszerűen)
-  
-
-
+Végül úgy lett megírva, h amikor rámegy a fej egy 'X'-re akkor nem nő meg egyből,
+ csak a kövi körben, úgy, hogy az utolsó szelvény akkoron nem törlődik, csak egy
+ plusz adódik hozzá, h a nxt_pos() koord-kra rajzolódik ki ill snake_add() fv
+ segítségével be insertáljuk mint új koord az x-y [] tömb párba, h tartós legyen 
+ a hatás.
+ 
+ a fenti hiányosságokon túl már csak extrák vannak mint menük, sebesség állítás
+ pontszám kijelzés stb. de az alpjáték már majdnem kész.

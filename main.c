@@ -33,7 +33,7 @@ void snake_add();
 unsigned char kp=0, cnt=0, t=0, ch=0x00, btn=0, ss[4], keyr=0, col=0, keyin=10, rlse_cntr=0, last_value=0;
 //kp: keypressed happened, kp tárolja mely bill lett leütve
 unsigned char y[64], x[64], l=1, last=0, nxt_y=0, nxt_x=0, c=0, h=0;
-unsigned char r=0, rnd_cnt=0, rnd_y=0, rnd_x=0, nw=0;
+unsigned char r=0, rnd_cnt=0, rnd_y=0, rnd_x=0, nw=0, score=0;
 
 
 int main()
@@ -67,7 +67,7 @@ int main()
 	ss_coords_out();
 	
 	UartSendByte(12);
-	UartSendString("Snake is Ready;");
+	UartSendString("Snake is Ready;\n\n");
 	        
         sei();
         
@@ -80,19 +80,21 @@ while(1){
 
         matrix();
         
-        if ( kp>0 && r==0 ) {r=1; place_rnd(); }
+        if ( kp>0 && r==0 ) {place_rnd(); r=1; }
         
         if((t==1) && (kp==2 || kp==8 || kp==4 || kp==6)){
        
         t=0; cnt=0; 
        
-        lcd_gotoyx(y[last],x[last]);
+       if (nw!=1){lcd_gotoyx(y[last],x[last]);
         lcd_data(0x01);
-        lcd_cmd(0x0C);
-     
+        lcd_cmd(0x0C);}
+       
         next_pos(kp); 
                 
-        
+        if(nw==1) {nw=0; snake_add(); place_rnd(); score++;
+        UartSendString("\rScore: "); UartSendByte((score/10)+48);UartSendByte((score%10)+48);}
+       
         
         y[last]=nxt_y;
         x[last]=nxt_x;
@@ -101,12 +103,14 @@ while(1){
         h=chck_hit();
         if (h==1) {lcd_clear(); lcd_gotoyx(1,4); lcd_string("Game Over!"); UartSendString("\n\rSnake is Dead."); while(1);}
         
+        
+        
+             
         if(last<l-1) last++;
         else last=0;
                   
         nw=chck_new();
-        if(nw==1) {nw=0; next_pos(kp); snake_add(); place_rnd();}
-        
+                
         lcd_gotoyx(nxt_y, nxt_x);
         lcd_data(0x00);
         lcd_cmd(0x0C);
@@ -353,9 +357,12 @@ unsigned char chck_new()
 
 void place_rnd() 
 {
+        /*if (r==1){ lcd_gotoyx(rnd_y, rnd_x);
+        lcd_data(0x00);}*/
         rnd_x=rnd_cnt%16; rnd_y=rnd_cnt%4;
         lcd_gotoyx(rnd_y, rnd_x);
-        lcd_data(0x00);
+        lcd_data('X');
+        
 }
 
 
@@ -375,12 +382,11 @@ void snake_add()
         
         }
         
-        x[last] = nxt_x;
+       /* x[last] = nxt_x;
         y[last] = nxt_y;
         
         if(last<l-1) last++;
-        else last=0;
-
+        else last=0;*/
 
 }
 
