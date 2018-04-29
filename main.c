@@ -92,9 +92,7 @@ while(1){
      
         next_pos(kp); 
                 
-        lcd_gotoyx(nxt_y, nxt_x);
-        lcd_data(0x00);
-        lcd_cmd(0x0C);
+        
         
         y[last]=nxt_y;
         x[last]=nxt_x;
@@ -107,9 +105,11 @@ while(1){
         else last=0;
                   
         nw=chck_new();
-        if(nw==1) {nw=0; nxt_y = rnd_y; nxt_x = rnd_x; snake_add(); place_rnd();}
+        if(nw==1) {nw=0; next_pos(kp); snake_add(); place_rnd();}
         
-        
+        lcd_gotoyx(nxt_y, nxt_x);
+        lcd_data(0x00);
+        lcd_cmd(0x0C);
           
         
                  
@@ -343,32 +343,7 @@ unsigned char chck_hit()
 
 unsigned char chck_new()
 {
-        unsigned char rn;
-        
-        
-        
-        switch (kp) {
-                case 2: { if(rnd_y == 3){ rn=0; }
-                          else rn = rnd_y+1;
-                          if ((nxt_x == rnd_x) && (nxt_y <= rn)) { return 1;}
-                          break;}
-                
-                case 6: { if(rnd_x == 0){ rn=15; }
-                          else rn = rnd_x-1;
-                          if ((nxt_y == rnd_y) && (nxt_x >= rn)) { return 1;}
-                          break;}
-                          
-                case 4: { if(rnd_x == 15){ rn=0; }
-                          else rn = rnd_x+1;
-                          if ((nxt_y == rnd_y) && (nxt_x <= rn)) { return 1;}
-                          break;}
-                
-                case 8: { if(rnd_y == 0){ rn=3; }
-                          else rn = rnd_y-1;
-                          if ((nxt_x == rnd_x) && (nxt_y >= rn)) { return 1;}
-                          break;}
-        
-        }//sw   
+        if ((nxt_y == rnd_y) && (nxt_x == rnd_x)) return 1;       
         
         return 0;     
           
@@ -380,7 +355,7 @@ void place_rnd()
 {
         rnd_x=rnd_cnt%16; rnd_y=rnd_cnt%4;
         lcd_gotoyx(rnd_y, rnd_x);
-        lcd_data('X');
+        lcd_data(0x00);
 }
 
 
